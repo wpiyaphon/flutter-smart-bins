@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "199384030415",
+    "firebase_url": "https://smartbins-14eb2-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "smartbins-14eb2",
+    "storage_bucket": "smartbins-14eb2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:199384030415:android:39111fcbb7d303cddbabba",
+        "android_client_info": {
+          "package_name": "com.example.smart_bins_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "199384030415-nbtna9e29cipd9c9psrr90fkvqm10dbo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5cE0LAZaWXwriko4yQyIl4OL0dV8H0O4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "199384030415-nbtna9e29cipd9c9psrr90fkvqm10dbo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

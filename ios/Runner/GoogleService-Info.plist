@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyB9sH13GfSWBIgy4OtP7jQUbDhqQoyewpo</string>
+	<key>GCM_SENDER_ID</key>
+	<string>199384030415</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.smartBinsFlutter</string>
+	<key>PROJECT_ID</key>
+	<string>smartbins-14eb2</string>
+	<key>STORAGE_BUCKET</key>
+	<string>smartbins-14eb2.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:199384030415:ios:2df49c1cd1a107a0dbabba</string>
+	<key>DATABASE_URL</key>
+	<string>https://smartbins-14eb2-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+</dict>
+</plist>
