@@ -42,62 +42,64 @@ class _BinScreenState extends State<BinScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        padding: const EdgeInsets.only(top: 25.0),
-        itemCount: binData.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(12.0, 6.0, 12.0, 6.0),
-            child: Card(
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(18.0),
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      binData[index].name,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 25.0),
-                    ),
-                    Text.rich(
-                      TextSpan(children: [
-                        WidgetSpan(
-                          alignment: PlaceholderAlignment.middle,
-                          child: Icon(
-                            Icons.info,
-                            color: binData[index].volume >= 9
-                                ? Colors.red[600]
-                                : binData[index].volume >= 6
-                                    ? Colors.yellow[800]
-                                    : Colors.green[600],
+    return Scaffold(
+      appBar: AppBar(title: const Text('Bins Status')),
+      body: ListView.builder(
+          itemCount: binData.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(12.0, 6.0, 12.0, 6.0),
+              child: Card(
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(18.0),
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        binData[index].name,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 25.0),
+                      ),
+                      Text.rich(
+                        TextSpan(children: [
+                          WidgetSpan(
+                            alignment: PlaceholderAlignment.middle,
+                            child: Icon(
+                              Icons.info,
+                              color: binData[index].volume >= 9
+                                  ? Colors.red[600]
+                                  : binData[index].volume >= 6
+                                      ? Colors.yellow[800]
+                                      : Colors.green[600],
+                            ),
                           ),
-                        ),
-                        const WidgetSpan(
-                          child: SizedBox(width: 5),
-                        ),
-                        TextSpan(
-                            text: binData[index].volume >= 9
-                                ? "Totally Full"
-                                : binData[index].volume >= 6
-                                    ? "Almost Full"
-                                    : "Clear",
-                            style: TextStyle(
-                                color: binData[index].volume >= 9
-                                    ? Colors.red[600]
-                                    : binData[index].volume >= 6
-                                        ? Colors.yellow[800]
-                                        : Colors.green[600])),
-                      ]),
-                    )
-                  ],
+                          const WidgetSpan(
+                            child: SizedBox(width: 5),
+                          ),
+                          TextSpan(
+                              text: binData[index].volume >= 9
+                                  ? "Totally Full"
+                                  : binData[index].volume >= 6
+                                      ? "Almost Full"
+                                      : "Clear",
+                              style: TextStyle(
+                                  color: binData[index].volume >= 9
+                                      ? Colors.red[600]
+                                      : binData[index].volume >= 6
+                                          ? Colors.yellow[800]
+                                          : Colors.green[600])),
+                        ]),
+                      )
+                    ],
+                  ),
+                  minVerticalPadding: 2.0,
+                  subtitle: Text(
+                      'Capacity: ${binData[index].volume <= 12 ? ((binData[index].volume / 12) * 100).round() : '100'}%',
+                      style: const TextStyle(fontSize: 20.0)),
                 ),
-                minVerticalPadding: 2.0,
-                subtitle: Text(
-                    'Capacity: ${binData[index].volume <= 12 ? ((binData[index].volume / 12) * 100).round() : '100'}%',
-                    style: const TextStyle(fontSize: 20.0)),
               ),
-            ),
-          );
-        });
+            );
+          }),
+    );
   }
 }

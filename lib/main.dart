@@ -78,10 +78,6 @@ class _MyHomePageState extends State<MyHomePage> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
-              appBar: AppBar(
-                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-                title: Text(widget.title),
-              ),
               body: _widgetOptions.elementAt(_selectedIndex),
               bottomNavigationBar: BottomNavigationBar(
                   currentIndex: _selectedIndex,
@@ -89,12 +85,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   iconSize: 30,
                   items: const [
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.home),
+                      icon: Icon(Icons.delete),
                       label: 'Bins',
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.location_on),
-                      label: 'Search Route',
+                      label: 'Route',
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.notifications),

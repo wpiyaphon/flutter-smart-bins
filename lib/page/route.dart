@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:smart_bins_flutter/directions_repository.dart';
 import 'package:smart_bins_flutter/models/bin_model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:smart_bins_flutter/models/directions_model.dart';
 
 class RouteScreen extends StatefulWidget {
   const RouteScreen({super.key});
@@ -21,9 +23,11 @@ class _RouteScreenState extends State<RouteScreen> {
   @override
   void initState() {
     super.initState();
+    getCurrentLocation();
     _activateListeners();
-    getLocation();
   }
+
+  int limitCapacity = (12 * (75 / 100)).ceil();
 
   void _activateListeners() {
     _database.child("bins").onValue.listen((DatabaseEvent event) {
@@ -33,7 +37,7 @@ class _RouteScreenState extends State<RouteScreen> {
           binData = data.entries.map((e) {
             final value = e.value as Map<Object?, Object?>;
             final name = value['name'] as String? ?? "";
-            final volume = value['capacity'] is num
+            final capacity = value['capacity'] is num
                 ? (value['capacity'] as num).toDouble()
                 : 0.0; // Handle null or non-double values
             final latitude = value['latitude'] is num
@@ -42,8 +46,8 @@ class _RouteScreenState extends State<RouteScreen> {
             final longitude = value['longitude'] is num
                 ? (value['longitude'] as num).toDouble()
                 : 0.0;
-            setState(() {
-              _markers.add(
+            if (capacity >= limitCapacity) {
+              locationList.add(
                 Marker(
                   markerId: MarkerId(name),
                   position: LatLng(latitude, longitude),
@@ -52,10 +56,10 @@ class _RouteScreenState extends State<RouteScreen> {
                   ),
                 ),
               );
-            });
+            }
             return Bin(
                 name: name,
-                volume: volume,
+                volume: capacity,
                 latitude: latitude,
                 longitude: longitude);
           }).toList();
@@ -67,10 +71,11 @@ class _RouteScreenState extends State<RouteScreen> {
   // Google Maps
   Completer<GoogleMapController> _controller = Completer();
   List<Marker> _markers = [];
+  List<Marker> locationList = [];
   LatLng? _currentPosition;
   bool _isLoading = true;
 
-  getLocation() async {
+  getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return Future.error("Location service is not enabled");
@@ -101,24 +106,43 @@ class _RouteScreenState extends State<RouteScreen> {
     if (mounted) {
       setState(() {
         _currentPosition = location;
-        _isLoading = false;
-        _markers.add(
+        locationList.add(
           Marker(
-            markerId: const MarkerId('1'),
-            position: _currentPosition!,
+            markerId: const MarkerId('currentPosition'),
+            position: LatLng(location.latitude, location.longitude),
             infoWindow: const InfoWindow(
-              title: 'My Position',
+              title: 'My Location',
             ),
           ),
         );
+        _isLoading = false;
       });
+    }
+  }
+
+  void getShortestRoute() async {
+    print('locationListInGet $locationList');
+
+    if (locationList.length > 0) {
+      List<Marker> destinations = locationList.sublist(1, locationList.length);
+      Marker currentLocation = locationList.elementAt(0);
+
+      print('-----------------------------');
+      print('destinations: $destinations');
+      print('currentLocation: $currentLocation');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // print(_currentPosition);
     return Scaffold(
+      appBar: AppBar(
+          centerTitle: false,
+          title: const Text("Google Maps"),
+          actions: [
+            TextButton(
+                onPressed: () => _addRoute(), child: const Text("Find Route"))
+          ]),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : GoogleMap(
@@ -135,5 +159,18 @@ class _RouteScreenState extends State<RouteScreen> {
               },
             ),
     );
+  }
+
+  void _addRoute() async {
+    print('locationListInGet $locationList');
+
+    if (locationList.isNotEmpty) {
+      List<Marker> destinations = locationList.sublist(1, locationList.length);
+      Marker currentLocation = locationList.elementAt(0);
+
+      print('-----------------------------');
+      print('destinations: $destinations');
+      print('currentLocation: $currentLocation');
+    }
   }
 }
