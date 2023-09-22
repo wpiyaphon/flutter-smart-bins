@@ -5,14 +5,18 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class Directions {
   final LatLngBounds bounds;
   final List<PointLatLng> polylinePoints;
-  final String totalDistance;
-  final String totalDuration;
+  final int totalDistance;
+  final int totalDuration;
+  final String endAddress;
+  final LatLng position;
 
   const Directions({
     required this.bounds,
     required this.polylinePoints,
     required this.totalDistance,
     required this.totalDuration,
+    required this.endAddress,
+    required this.position,
   });
 
   factory Directions.fromMap(Map<String, dynamic> map) {
@@ -33,20 +37,25 @@ class Directions {
     );
 
     // Distance & Duration
-    String distance = '';
-    String duration = '';
+    int distance = 99999999;
+    int duration = 99999999;
+    String endAddress = '';
+    LatLng position = const LatLng(0, 0);
     if ((data['legs'] as List).isNotEmpty) {
       final leg = data['legs'][0];
-      distance = leg['distance']['text'];
-      duration = leg['duration']['text'];
+      distance = leg['distance']['value'];
+      duration = leg['duration']['value'];
+      endAddress = leg['end_address'];
+      position = LatLng(leg['end_location']['lat'], leg['end_location']['lng']);
     }
 
     return Directions(
-      bounds: bounds,
-      polylinePoints:
-          PolylinePoints().decodePolyline(data['overview_polyline']['points']),
-      totalDistance: distance,
-      totalDuration: duration,
-    );
+        bounds: bounds,
+        polylinePoints: PolylinePoints()
+            .decodePolyline(data['overview_polyline']['points']),
+        totalDistance: distance,
+        totalDuration: duration,
+        position: position,
+        endAddress: endAddress);
   }
 }

@@ -3,12 +3,15 @@ class Bin {
   num volume;
   num? latitude;
   num? longitude;
+  int? timestamp;
 
-  Bin(
-      {required this.name,
-      required this.volume,
-      this.latitude,
-      this.longitude});
+  Bin({
+    required this.name,
+    required this.volume,
+    this.latitude,
+    this.longitude,
+    this.timestamp,
+  });
 
   @override
   String toString() {

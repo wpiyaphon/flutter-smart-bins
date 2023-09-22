@@ -4,13 +4,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smart_bins_flutter/.env.dart';
 import 'models/directions_model.dart';
 
-class DirectionRepository {
+class DirectionsRepository {
   static const String _baseUrl =
       "https://maps.googleapis.com/maps/api/directions/json?";
 
   final Dio _dio;
 
-  DirectionRepository({required Dio dio}) : _dio = dio ?? Dio();
+  DirectionsRepository({Dio? dio}) : _dio = dio ?? Dio();
 
   Future<Directions?> getDirections({
     required LatLng origin,
@@ -19,8 +19,8 @@ class DirectionRepository {
     final response = await _dio.get(
       _baseUrl,
       queryParameters: {
-        'origin': '${origin.latitude}, ${origin.latitude}',
-        'destination': '${destination.latitude}, ${destination.latitude}',
+        'origin': '${origin.latitude}, ${origin.longitude}',
+        'destination': '${destination.latitude}, ${destination.longitude}',
         'key': googleAPIKey
       },
     );

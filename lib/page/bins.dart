@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:smart_bins_flutter/models/bin_model.dart';
 
 class BinScreen extends StatefulWidget {
@@ -22,6 +23,13 @@ class _BinScreenState extends State<BinScreen> {
     _activateListeners();
   }
 
+  String timestampToDate(int? timestamp) {
+    var dt = DateTime.fromMillisecondsSinceEpoch(timestamp!);
+    var date = DateFormat('MM/dd/yyyy, HH:mm').format(dt);
+
+    return date.toString();
+  }
+
   void _activateListeners() {
     _database.child("bins").onValue.listen((DatabaseEvent event) {
       final data = event.snapshot.value as Map<Object?, Object?>?;
@@ -33,7 +41,9 @@ class _BinScreenState extends State<BinScreen> {
             final volume = value['capacity'] is num
                 ? (value['capacity'] as num).toDouble()
                 : 0.0; // Handle null or non-double values
-            return Bin(name: name, volume: volume);
+            final timestamp =
+                value['timeEdited'] is num ? (value['timeEdited'] as int) : 0;
+            return Bin(name: name, volume: volume, timestamp: timestamp);
           }).toList();
         });
       }
@@ -58,7 +68,7 @@ class _BinScreenState extends State<BinScreen> {
                       Text(
                         binData[index].name,
                         style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 25.0),
+                            fontWeight: FontWeight.bold, fontSize: 22.0),
                       ),
                       Text.rich(
                         TextSpan(children: [
@@ -77,25 +87,35 @@ class _BinScreenState extends State<BinScreen> {
                             child: SizedBox(width: 5),
                           ),
                           TextSpan(
-                              text: binData[index].volume >= 9
-                                  ? "Totally Full"
-                                  : binData[index].volume >= 6
-                                      ? "Almost Full"
-                                      : "Clear",
-                              style: TextStyle(
-                                  color: binData[index].volume >= 9
-                                      ? Colors.red[600]
-                                      : binData[index].volume >= 6
-                                          ? Colors.yellow[800]
-                                          : Colors.green[600])),
+                            text: binData[index].volume >= 9
+                                ? "Totally Full"
+                                : binData[index].volume >= 6
+                                    ? "Almost Full"
+                                    : "Clear",
+                            style: TextStyle(
+                                color: binData[index].volume >= 9
+                                    ? Colors.red[600]
+                                    : binData[index].volume >= 6
+                                        ? Colors.yellow[800]
+                                        : Colors.green[600]),
+                          ),
                         ]),
                       )
                     ],
                   ),
                   minVerticalPadding: 2.0,
-                  subtitle: Text(
-                      'Capacity: ${binData[index].volume <= 12 ? ((binData[index].volume / 12) * 100).round() : '100'}%',
-                      style: const TextStyle(fontSize: 20.0)),
+                  subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Capacity: ${binData[index].volume <= 12 ? ((binData[index].volume / 12) * 100).round() : '100'}%',
+                          style: const TextStyle(fontSize: 16.0),
+                        ),
+                        Text(
+                          'Last Updated: ${timestampToDate(binData[index].timestamp)} Hrs.',
+                          style: const TextStyle(fontSize: 16.0),
+                        ),
+                      ]),
                 ),
               ),
             );

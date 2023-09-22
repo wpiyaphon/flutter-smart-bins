@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:smart_bins_flutter/directions_repository.dart';
 import 'package:smart_bins_flutter/models/bin_model.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -56,6 +57,15 @@ class _RouteScreenState extends State<RouteScreen> {
                   ),
                 ),
               );
+              _markers.add(
+                Marker(
+                  markerId: MarkerId(name),
+                  position: LatLng(latitude, longitude),
+                  infoWindow: InfoWindow(
+                    title: name,
+                  ),
+                ),
+              );
             }
             return Bin(
                 name: name,
@@ -74,6 +84,7 @@ class _RouteScreenState extends State<RouteScreen> {
   List<Marker> locationList = [];
   LatLng? _currentPosition;
   bool _isLoading = true;
+  List<Directions> _routes = [];
 
   getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -106,30 +117,17 @@ class _RouteScreenState extends State<RouteScreen> {
     if (mounted) {
       setState(() {
         _currentPosition = location;
-        locationList.add(
-          Marker(
-            markerId: const MarkerId('currentPosition'),
-            position: LatLng(location.latitude, location.longitude),
-            infoWindow: const InfoWindow(
-              title: 'My Location',
-            ),
-          ),
-        );
+        // _markers.add(
+        //   Marker(
+        //     markerId: const MarkerId('currentPosition'),
+        //     position: LatLng(location.latitude, location.longitude),
+        //     infoWindow: const InfoWindow(
+        //       title: 'My Location',
+        //     ),
+        //   ),
+        // );
         _isLoading = false;
       });
-    }
-  }
-
-  void getShortestRoute() async {
-    print('locationListInGet $locationList');
-
-    if (locationList.length > 0) {
-      List<Marker> destinations = locationList.sublist(1, locationList.length);
-      Marker currentLocation = locationList.elementAt(0);
-
-      print('-----------------------------');
-      print('destinations: $destinations');
-      print('currentLocation: $currentLocation');
     }
   }
 
@@ -149,7 +147,7 @@ class _RouteScreenState extends State<RouteScreen> {
               mapType: MapType.normal,
               initialCameraPosition: CameraPosition(
                 target: _currentPosition ?? const LatLng(0.0, 0.0),
-                zoom: 19.151926040649414,
+                zoom: 16,
               ),
               markers: Set<Marker>.of(_markers),
               myLocationEnabled: true,
@@ -157,20 +155,84 @@ class _RouteScreenState extends State<RouteScreen> {
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
               },
+              polylines: Set<Polyline>.of(
+                _routes.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final route = entry.value;
+
+                  return Polyline(
+                    polylineId: PolylineId(
+                        'route_$index'), // Unique ID for each polyline
+                    color: Colors.purple,
+                    width: 5,
+                    points: route.polylinePoints
+                        .map((e) => LatLng(e.latitude, e.longitude))
+                        .toList(),
+                  );
+                }),
+              ),
             ),
     );
   }
 
   void _addRoute() async {
-    print('locationListInGet $locationList');
+    if (locationList.length > 1 && mounted) {
+      _isLoading = true;
 
-    if (locationList.isNotEmpty) {
-      List<Marker> destinations = locationList.sublist(1, locationList.length);
-      Marker currentLocation = locationList.elementAt(0);
+      List<Marker> destinations = locationList;
+      List<Directions> resultRoutes = [];
 
-      print('-----------------------------');
-      print('destinations: $destinations');
-      print('currentLocation: $currentLocation');
+      while (destinations.isNotEmpty) {
+        List<Directions> tempRoutes = [];
+        Directions tempCurrentLocation = Directions(
+          bounds: LatLngBounds(
+            northeast: const LatLng(0, 0),
+            southwest: const LatLng(0, 0),
+          ),
+          polylinePoints: [],
+          totalDistance: 999999,
+          totalDuration: 999999,
+          endAddress: 'init',
+          position:
+              LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+        );
+
+        int bestDistance = 999999;
+        int bestRouteIndex = 0;
+
+        for (var i = 0; i < destinations.length; i++) {
+          final directions = await DirectionsRepository().getDirections(
+              origin: tempCurrentLocation.position,
+              destination: destinations[i].position);
+          tempRoutes.add(directions!);
+          // Call API
+        }
+        for (var i = 0; i < tempRoutes.length; i++) {
+          if (tempRoutes[i].totalDistance < bestDistance) {
+            bestDistance = tempRoutes[i].totalDistance;
+            bestRouteIndex = i;
+          }
+        }
+
+        resultRoutes.add(tempRoutes[bestRouteIndex]);
+        tempCurrentLocation = tempRoutes[bestRouteIndex];
+        destinations.removeAt(bestRouteIndex);
+      }
+      resultRoutes.add(Directions(
+        bounds: LatLngBounds(
+          northeast: const LatLng(0, 0),
+          southwest: const LatLng(0, 0),
+        ),
+        polylinePoints: [],
+        totalDistance: 999999,
+        totalDuration: 999999,
+        endAddress: 'backToCurrentLocation',
+        position:
+            LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+      ));
+
+      setState(() => _routes = resultRoutes);
+      _isLoading = false;
     }
   }
 }
