@@ -117,15 +117,15 @@ class _RouteScreenState extends State<RouteScreen> {
     if (mounted) {
       setState(() {
         _currentPosition = location;
-        // _markers.add(
-        //   Marker(
-        //     markerId: const MarkerId('currentPosition'),
-        //     position: LatLng(location.latitude, location.longitude),
-        //     infoWindow: const InfoWindow(
-        //       title: 'My Location',
-        //     ),
-        //   ),
-        // );
+        _markers.add(
+          Marker(
+            markerId: const MarkerId('currentPosition'),
+            position: LatLng(location.latitude, location.longitude),
+            infoWindow: const InfoWindow(
+              title: 'My Location',
+            ),
+          ),
+        );
         _isLoading = false;
       });
     }
@@ -150,7 +150,6 @@ class _RouteScreenState extends State<RouteScreen> {
                 zoom: 16,
               ),
               markers: Set<Marker>.of(_markers),
-              myLocationEnabled: true,
               compassEnabled: true,
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
@@ -176,7 +175,7 @@ class _RouteScreenState extends State<RouteScreen> {
   }
 
   void _addRoute() async {
-    if (locationList.length > 1 && mounted) {
+    if (locationList.isNotEmpty && mounted) {
       _isLoading = true;
 
       List<Marker> destinations = locationList;
