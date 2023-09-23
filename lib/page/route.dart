@@ -217,18 +217,12 @@ class _RouteScreenState extends State<RouteScreen> {
         tempCurrentLocation = tempRoutes[bestRouteIndex];
         destinations.removeAt(bestRouteIndex);
       }
-      resultRoutes.add(Directions(
-        bounds: LatLngBounds(
-          northeast: const LatLng(0, 0),
-          southwest: const LatLng(0, 0),
-        ),
-        polylinePoints: [],
-        totalDistance: 999999,
-        totalDuration: 999999,
-        endAddress: 'backToCurrentLocation',
-        position:
-            LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-      ));
+
+      final goBackDirection = await DirectionsRepository().getDirections(
+          origin: resultRoutes[resultRoutes.length - 1].position,
+          destination:
+              LatLng(_currentPosition!.latitude, _currentPosition!.longitude));
+      resultRoutes.add(goBackDirection!);
 
       setState(() => _routes = resultRoutes);
       _isLoading = false;
