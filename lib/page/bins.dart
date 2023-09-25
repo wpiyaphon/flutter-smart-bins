@@ -43,7 +43,13 @@ class _BinScreenState extends State<BinScreen> {
                 : 0.0; // Handle null or non-double values
             final timestamp =
                 value['timeEdited'] is num ? (value['timeEdited'] as int) : 0;
-            return Bin(name: name, volume: volume, timestamp: timestamp);
+            final maxCapacity =
+                value['capacity'] is num ? value['maxCapacity'] as num : 0;
+            return Bin(
+                name: name,
+                volume: volume,
+                timestamp: timestamp,
+                maxCapacity: maxCapacity);
           }).toList();
         });
       }
@@ -108,7 +114,7 @@ class _BinScreenState extends State<BinScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Capacity: ${binData[index].volume <= 12 ? ((binData[index].volume / 12) * 100).round() : '100'}%',
+                          'Capacity: ${binData[index].volume <= binData[index].maxCapacity! ? ((binData[index].volume / binData[index].maxCapacity!) * 100).round() : '100'}%',
                           style: const TextStyle(fontSize: 16.0),
                         ),
                         Text(

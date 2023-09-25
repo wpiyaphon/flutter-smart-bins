@@ -1,17 +1,18 @@
-# smart_bins_flutter
 
-A new Flutter project.
+# Smart Bins
 
-## Getting Started
+The project is a comprehensive application developed with Flutter, designed to showcase bin statuses, routes, and provide timely notifications to users. It achieves this by harnessing data transmitted from IoT devices through the capabilities of Firebase features.
 
-This project is a starting point for a Flutter application.
+## Features
 
-A few resources to get you started if this is your first Flutter project:
+- Bin Capacity Tracking
+Leveraging Firebase Real-Time Database, we can seamlessly update and present information to users in real-time, ensuring that the latest data is consistently available and displayed to users.
+- Shortest Distance Route
+This feature applies Directions API, offering application the ability to compute  efficient routes by prioritizing factors such as travel time (as the primary consideration), distance, and the number of turns. However, customization is needed to get multiple routes.
+- Notification
+Within Smart Bins application, Firebase Cloud Messaging seamlessly guides you through the process of registering a device to obtain its FCM token, enabling you to effortlessly dispatch notifications through this unique identifier. Additionally, Firebase Functions gracefully operates as a dedicated 24/7 backend server, springing into action to trigger notification delivery when specific conditions are met.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Authors
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# flutter-smart-bins
+- [@wupiyaphon](https://www.github.com/wpiyaphon)
+
